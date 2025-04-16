@@ -1,6 +1,11 @@
-from flask import Flask
+from flask import Flask, render_template
+from flask_wtf import FlaskForm
+from wtforms import StringField, TimeField, DateField, SubmitField, SelectField
+from wtforms.validators import DataRequired, Length, Email, EqualTo
+
 import os
 import psycopg2
+import time
 
 app = Flask(__name__)
 
@@ -12,10 +17,14 @@ def get_db_connection():
     conn.autocommit = True
     return conn
 
-@app.route('/docker-status')
-def dockerStatus():
-    return "Docker Started Successfully"
+@app.route('/profile')
+def my_profile():
+    response_body = {
+        "name": "Jacob",
+        "about" :"Hello! I'm a full stack developer that loves python and javascript"
+    }
 
+    return response_body
 
 if __name__ == "__main__":
     port = int(os.environ.get('PORT', 5000))

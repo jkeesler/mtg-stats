@@ -6,7 +6,7 @@ RUN dnf install -y wget && \
 	rm ~/miniconda.sh
 
 ENV PATH=/opt/conda/bin:$PATH
-ENV FLASK_APP=stats.py
+ENV FLASK_APP=./api/base.py
 
 RUN conda update conda -y && \
     mkdir -p /app/stats
@@ -14,12 +14,13 @@ RUN conda update conda -y && \
 WORKDIR /app/stats
 
 COPY ../conda-setup.yaml ./
-COPY ../stats.py ./
-COPY ../init_scripts/entrypoint.sh ./
 
 RUN conda env create -f conda-setup.yaml && \
     conda init && \
     source ${HOME}/.bashrc
+
+COPY ../api ./api
+COPY ../init_scripts/entrypoint.sh ./
 
 EXPOSE 5000
 

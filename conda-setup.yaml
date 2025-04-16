@@ -1,6 +1,10 @@
 name: mtg-stats
+channels:
+  - conda-forge
+  - defaults
 dependencies:
   - python=3.12
   - flask
+  - flask-wtf
   - python-dotenv
   - psycopg2

@@ -28,17 +28,11 @@ services:
         condition: service_healthy
         restart: true
     container_name: mtg-stats-pgadmin
-  app:
+  api:
     image: docker.io/library/stats:test
     build: 
       context: .
-      dockerfile: ./Dockerfiles/app.Dockerfile
-    healthcheck:
-      test: curl -f http://localhost:5000/docker-status || exit 1
-      interval: 1m30s
-      timeout: 30s
-      retries: 5
-      start_period: 30s
+      dockerfile: ./Dockerfiles/api.Dockerfile
     env_file:
       - "./secrets/db.env"
     ports:
@@ -48,3 +42,11 @@ services:
         condition: service_healthy
         restart: true
     container_name: mtg-stats-app
+  frontend:
+    image: docker.io/library/frontend:test
+    build:
+      context: .
+      dockerfile: ./Dockerfiles/frontend.Dockerfile
+    ports:
+      - "3000:3000"
+    container_name: mtg-stats-frontend
