@@ -15,6 +15,8 @@ services:
     ports:
       - "5432:5432"
     container_name: mtg-stats-database
+    extra_hosts:
+      - "localhost:127.0.0.1"
   pgadmin:
     image: dpage/pgadmin4:9.2.0
     ports:
@@ -37,6 +39,8 @@ services:
       timeout: 30s
       retries: 5
       start_period: 30s
+    env_file:
+      - "./secrets/db.env"
     ports:
       - "5000:5000"
     depends_on:

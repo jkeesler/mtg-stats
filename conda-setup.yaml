@@ -1,5 +1,6 @@
 name: mtg-stats
 dependencies:
-  - python=3.13.2
+  - python=3.12
   - flask
   - python-dotenv
+  - psycopg2

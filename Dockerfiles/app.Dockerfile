@@ -13,9 +13,9 @@ RUN conda update conda -y && \
 
 WORKDIR /app/stats
 
-COPY conda-setup.yaml ./
-COPY stats.py ./
-COPY entrypoint.sh ./
+COPY ../conda-setup.yaml ./
+COPY ../stats.py ./
+COPY ../init_scripts/entrypoint.sh ./
 
 RUN conda env create -f conda-setup.yaml && \
     conda init && \
