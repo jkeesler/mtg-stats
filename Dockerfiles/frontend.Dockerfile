@@ -6,7 +6,9 @@ COPY ../frontend/ .
 
 WORKDIR /app/frontend
 
-RUN npm install
+RUN npm install && \
+    npm install axios && \
+    npm install react-router-dom
   
 EXPOSE 3000
  
