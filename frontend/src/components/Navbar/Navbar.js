@@ -1,8 +1,9 @@
-import { Link, useNavigate } from "react-router-dom"
+import { useNavigate } from "react-router-dom"
 import axios from "axios";
 
 export function Navbar(props) {
 
+    const userToken = localStorage.getItem('token');
     const navigate = useNavigate();
 
     function logMeOut() {
@@ -20,6 +21,23 @@ export function Navbar(props) {
             }
         })}
 
+    function logoutOrLogin() {
+        if (!userToken){
+            return (
+                <button onClick={() => navigate("/login")}>
+                    Login
+                </button>
+            )
+        }
+        else {
+            return (
+                <button onClick={logMeOut}>
+                    Logout
+                </button>
+            )
+        }
+    }
+
     return(
         <header className="App-header">
         <button onClick={() => navigate("/")}>
@@ -28,9 +46,7 @@ export function Navbar(props) {
         <button onClick={() => navigate("/profile")}>
             Profile
         </button>
-        <button onClick={logMeOut}>
-            Logout
-        </button>
+            {logoutOrLogin()}
         </header>
     )
 }

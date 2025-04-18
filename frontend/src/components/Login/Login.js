@@ -1,9 +1,12 @@
 import React from "react"
-import "../css/login.css"
+import "../../css/login.css"
 import { useState } from 'react';
 import axios from "axios";
+import useToken from './useToken';
 
 export function Login(props) {
+
+  const { token, removeToken, setToken } = useToken();
 
   const [loginForm, setloginForm] = useState({
     username: "",
@@ -50,7 +53,6 @@ export function Login(props) {
         <p>Username</p>
         <input onChange={handleChange}
                type="username"
-               text={loginForm.username}
                name="username"
                placeholder="Username"
                value={loginForm.username} />
@@ -59,7 +61,6 @@ export function Login(props) {
         <p>Password</p>
         <input onChange={handleChange} 
                type="password"
-               text={loginForm.password}
                name="password"
                placeholder="Password"
                value={loginForm.password} />
