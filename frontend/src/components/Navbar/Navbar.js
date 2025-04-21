@@ -1,10 +1,18 @@
 import { useNavigate } from "react-router-dom"
 import axios from "axios";
+import useToken from "../Login/useToken";
 
 export function Navbar(props) {
-
+    
+    const { token, removeToken, setToken } = useToken();
     const userToken = localStorage.getItem('token');
     const navigate = useNavigate();
+
+    const handleLogout = () => {
+        logMeOut();
+        removeToken();
+        navigate("/");
+    }
 
     function logMeOut() {
         axios({
@@ -31,7 +39,7 @@ export function Navbar(props) {
         }
         else {
             return (
-                <button onClick={logMeOut}>
+                <button onClick={handleLogout}>
                     Logout
                 </button>
             )
