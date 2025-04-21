@@ -1,7 +1,4 @@
 from flask import Flask, request, jsonify
-from flask_wtf import FlaskForm
-from wtforms import StringField, TimeField, DateField, SubmitField, SelectField
-from wtforms.validators import DataRequired, Length, Email, EqualTo
 from flask_cors import CORS
 from datetime import datetime, timedelta, timezone
 from flask_jwt_extended import create_access_token,get_jwt,get_jwt_identity, \
@@ -25,7 +22,8 @@ def get_db_connection():
                             user=os.environ['POSTGRES_USER'],
                             password=os.environ['POSTGRES_PASSWORD'])
     conn.autocommit = True
-    return conn
+    cursor = conn.cursor()
+    return cursor
 
 @app.after_request
 def refresh_expiring_jwts(response):
@@ -71,9 +69,28 @@ def my_profile():
     }
     return response_body
 
+@app.route('/register', methods=['GET', 'POST'])
+def add_user():
+    create_query = """
+    INSERT INTO users (username, password)
+    VALUES (%s, %s);
+    """
+
+    username = request.json.get("username", None)
+    password = request.json.get("password", None)
+
+    cursor = get_db_connection()
+
+    cursor.execute(create_query, (username, password))
+
+    created_message = {"created":"true"}
+
+    return created_message
+
 if __name__ == "__main__":
     port = int(os.environ.get('PORT', 5000))
-    conn = get_db_connection()
-    cursor = conn.cursor()
-    cursor.execute('CREATE TABLE IF NOT EXISTS stats (tcg VARCHAR(255), username VARCHAR(255), wins INT, losses INT, PRIMARY KEY (username))')
+    cursor = get_db_connection()
+    cursor.execute('CREATE TABLE IF NOT EXISTS users (username VARCHAR(255), password VARCHAR(255))')
+    # cursor.execute('CREATE TABLE IF NOT EXISTS stats (username VARCHAR(255), wins INT, losses INT, PRIMARY KEY (username))')
+    cursor.close
     app.run(debug=True, host='0.0.0.0', port=port)

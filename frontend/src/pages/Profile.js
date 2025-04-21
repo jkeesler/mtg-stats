@@ -1,7 +1,7 @@
 import { Login } from '../components/Login/Login'
 import useToken from '../components/Login/useToken'
 
-export function Profile() {
+export function ProfilePage() {
     const { token, removeToken, setToken } = useToken();
 
     if(!token){

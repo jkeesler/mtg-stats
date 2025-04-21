@@ -32,9 +32,15 @@ export function Navbar(props) {
     function logoutOrLogin() {
         if (!userToken){
             return (
-                <button onClick={() => navigate("/login")}>
-                    Login
-                </button>
+                <>
+                    <button onClick={() => navigate("/login")}>
+                        Login
+                    </button>
+                    <button onClick={() => navigate("/register")}>
+                        Register
+                    </button>
+                </>
+
             )
         }
         else {
@@ -54,7 +60,7 @@ export function Navbar(props) {
         <button onClick={() => navigate("/profile")}>
             Profile
         </button>
-            {logoutOrLogin()}
+        {logoutOrLogin()}
         </header>
     )
 }
