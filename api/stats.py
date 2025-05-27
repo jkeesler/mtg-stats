@@ -7,6 +7,7 @@ from flask_jwt_extended import create_access_token,get_jwt,get_jwt_identity, \
 import os
 import psycopg2
 import json
+import hashlib
 
 app = Flask(__name__)
 CORS(app)
@@ -77,6 +78,7 @@ def add_user():
     """
 
     username = request.json.get("username", None)
+    # password = hashlib.sha256(request.json.get("password", None).encode("utf-8")).hexdigest()
     password = request.json.get("password", None)
 
     cursor = get_db_connection()

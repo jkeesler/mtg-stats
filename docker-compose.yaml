@@ -28,6 +28,8 @@ services:
         condition: service_healthy
         restart: true
     container_name: mtg-stats-pgadmin
+    volumes:
+      - pgadmin-data:/var/lib/pgadmin
   api:
     image: docker.io/library/stats:test
     build: 
@@ -50,3 +52,5 @@ services:
     ports:
       - "3000:3000"
     container_name: mtg-stats-frontend
+volumes:
+  pgadmin-data:
