@@ -1,12 +1,13 @@
 import axios from "axios";
-import { useState } from "react"
+import { useEffect, useState } from "react"
 
-export function RegisterPage() {
+export function RegisterPage(props) {
 
     const [password, setPassword] = useState('');
     const [username, setUsername] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [passwordError, setPasswordError] = useState('');
+    const [usernameError, setUsernameError] = useState('');
 
     const validatePassword = () => {
         if (password !== confirmPassword) {
@@ -20,15 +21,25 @@ export function RegisterPage() {
     const handleSubmit = (event) => {
         event.preventDefault();
         if (validatePassword()) {
-            alert("Passwords match. Form submitted!");
             axios({
             method: "POST",
             url: "http://localhost:5000/register",
             data: {
                 username: username,
                 password: password
-            }
-        })
+                }
+            })
+            .then((response) => {
+                if (response.data.created == 'false'){
+                    setUsernameError("This username is already in use, please try again.")
+                }else{
+                    setUsernameError("")
+                }
+            }).catch((error) => {
+                console.log(error.response)
+                console.log(error.response.status)
+                console.log(error.response.headers)  
+            })
         }
     };
     
@@ -64,6 +75,7 @@ export function RegisterPage() {
                 />
             </div>
             {passwordError && <p style={{ color: 'red' }}>{passwordError}</p>}
+            {usernameError && <p style={{ color: 'red' }}>{usernameError}</p>}
             <button type="submit">Submit</button>
         </form>
     )
