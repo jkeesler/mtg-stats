@@ -77,14 +77,22 @@ def add_user():
     VALUES (%s, %s);
     """
 
+    username_check_query = """
+    SELECT username FROM users WHERE username = username
+    """
+
     username = request.json.get("username", None)
     password = hashlib.sha256(request.json.get("password", None).encode("utf-8")).hexdigest()
 
     cursor = get_db_connection()
 
-    cursor.execute(create_query, (username, password))
-
-    created_message = {"created":"true"}
+    cursor.execute(username_check_query, (username,))
+    user_exists = cursor.fetchone()
+    if bool(user_exists):
+        created_message = {"created":'false'}
+    else:
+        cursor.execute(create_query, (username, password))
+        created_message = {"created":'true'}
 
     return created_message
 
