@@ -1,3 +1,4 @@
+import axios from "axios";
 import { useState } from "react"
 
 export function RegisterPage() {
@@ -20,6 +21,14 @@ export function RegisterPage() {
         event.preventDefault();
         if (validatePassword()) {
             alert("Passwords match. Form submitted!");
+            axios({
+            method: "POST",
+            url: "http://localhost:5000/register",
+            data: {
+                username: username,
+                password: password
+            }
+        })
         }
     };
     
