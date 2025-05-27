@@ -78,8 +78,7 @@ def add_user():
     """
 
     username = request.json.get("username", None)
-    # password = hashlib.sha256(request.json.get("password", None).encode("utf-8")).hexdigest()
-    password = request.json.get("password", None)
+    password = hashlib.sha256(request.json.get("password", None).encode("utf-8")).hexdigest()
 
     cursor = get_db_connection()
 
