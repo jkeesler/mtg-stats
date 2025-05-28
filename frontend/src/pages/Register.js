@@ -1,5 +1,6 @@
 import axios from "axios";
-import { useEffect, useState } from "react"
+import { useState } from "react"
+import { useNavigate } from "react-router-dom"
 
 export function RegisterPage(props) {
 
@@ -8,6 +9,7 @@ export function RegisterPage(props) {
     const [confirmPassword, setConfirmPassword] = useState('');
     const [passwordError, setPasswordError] = useState('');
     const [usernameError, setUsernameError] = useState('');
+    const navigate = useNavigate();
 
     const validatePassword = () => {
         if (password !== confirmPassword) {
@@ -32,13 +34,13 @@ export function RegisterPage(props) {
             .then((response) => {
                 if (response.data.created == 'false'){
                     setUsernameError("This username is already in use, please try again.")
-                }else{
+                }
+                if (response.data.created == 'true'){
                     setUsernameError("")
+                    navigate("/Login")
                 }
             }).catch((error) => {
                 console.log(error.response)
-                console.log(error.response.status)
-                console.log(error.response.headers)  
             })
         }
     };
