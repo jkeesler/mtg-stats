@@ -44,7 +44,7 @@ def refresh_expiring_jwts(response):
         return response
 
 @app.route('/token', methods=['POST'])
-def create_token():
+def login():
     username = request.json.get("username", None).lower()
     password = hashlib.sha256(request.json.get("password", None).lower().encode("utf-8")).hexdigest()
 
@@ -75,15 +75,15 @@ def logout():
 
 @app.route('/profile', methods=['GET'])
 @jwt_required()
-def my_profile():
+def profile():
+    username = get_jwt_identity()
     response_body = {
-        "name": "Jacob",
-        "about" :"Hello! I'm a full stack developer that loves python and javascript"
+        "username": username
     }
     return response_body
 
 @app.route('/register', methods=['GET', 'POST'])
-def add_user():
+def register():
     create_query = """
     INSERT INTO users (username, password)
     VALUES (%s, %s);
