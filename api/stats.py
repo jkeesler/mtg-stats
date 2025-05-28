@@ -45,18 +45,21 @@ def refresh_expiring_jwts(response):
 
 @app.route('/token', methods=['POST'])
 def create_token():
-    username = request.json.get("username", None)
-    password = hashlib.sha256(request.json.get("password", None).encode("utf-8")).hexdigest()
+    username = request.json.get("username", None).lower()
+    password = hashlib.sha256(request.json.get("password", None).lower().encode("utf-8")).hexdigest()
 
-    # cred_retrieve_query = """
-    # SELECT username,password FROM users WHERE username = username
-    # """
+    cred_retrieve_query = """
+    SELECT username,password FROM users WHERE username = %s
+    """
 
-    # cursor = get_db_connection()
-    # cursor.execute(cred_retrieve_query, (username,))
-    # cred_retrieve = cursor.fetchone()
+    cursor = get_db_connection()
+    cursor.execute(cred_retrieve_query, (username,))
+    cred_retrieve = cursor.fetchone()
 
-    if username != "test" or password != "test":
+    retreived_user = cred_retrieve[0]
+    retrieved_pass = cred_retrieve[1]
+
+    if username != retreived_user or password != retrieved_pass:
         return {"msg": "Wrong username or password"}, 401
     
     access_token = create_access_token(identity=username)
@@ -97,7 +100,7 @@ def add_user():
 
     cursor.execute(username_check_query, (user,))
     user_exists = cursor.fetchone()
-    
+
     if bool(user_exists):
         created_message = {"created":'false'}
     else:
@@ -109,7 +112,7 @@ def add_user():
 if __name__ == "__main__":
     port = int(os.environ.get('PORT', 5000))
     cursor = get_db_connection()
-    cursor.execute('CREATE TABLE IF NOT EXISTS users (username VARCHAR(255), password VARCHAR(255))')
+    cursor.execute('CREATE TABLE IF NOT EXISTS users (username VARCHAR(255), password VARCHAR(255), PRIMARY KEY (username))')
     # cursor.execute('CREATE TABLE IF NOT EXISTS stats (username VARCHAR(255), wins INT, losses INT, PRIMARY KEY (username))')
     cursor.close
     app.run(debug=True, host='0.0.0.0', port=port)
