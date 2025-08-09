@@ -8,6 +8,9 @@ import os
 import psycopg2
 import json
 import hashlib
+import logging
+
+logging.basicConfig(level=logging.INFO)
 
 app = Flask(__name__)
 CORS(app)
@@ -77,16 +80,57 @@ def logout():
 @jwt_required()
 def profile():
     username = get_jwt_identity()
+    cursor = get_db_connection()
+
+    profile_query = """
+    SELECT wins, losses FROM users WHERE username = %s;
+    """
+    cursor.execute(profile_query, (username,))
+    profile_data = cursor.fetchone()
+
+    app.logger.info(profile_data)
+
     response_body = {
-        "username": username
+        "username": username,
+        "wins": profile_data[0],
+        "losses": profile_data[1]
     }
     return response_body
+
+@app.route('/modify_stats', methods=['POST'])
+@jwt_required()
+def modify_stats():
+    action = request.json.get("action", None)
+    username = get_jwt_identity()
+
+    cursor = get_db_connection()
+
+    if action == "add_win":
+        update_query = """
+        UPDATE users SET wins = wins + 1 WHERE username = %s;
+        """
+        cursor.execute(update_query, (username,))
+
+    elif action == "add_loss":
+        update_query = """
+        UPDATE users SET losses = losses + 1 WHERE username = %s;
+        """
+        cursor.execute(update_query, (username,))
+
+    elif action == "reset":
+        update_query = """
+        UPDATE users SET wins = 0, losses = 0 WHERE username = %s;
+        """
+        cursor.execute(update_query, (username,))
+        
+    return {"msg": "Stats updated successfully"}
+
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     create_query = """
-    INSERT INTO users (username, password)
-    VALUES (%s, %s);
+    INSERT INTO users (username, password, wins, losses)
+    VALUES (%s, %s, 0, 0);
     """
 
     username_check_query = """
@@ -112,7 +156,6 @@ def register():
 if __name__ == "__main__":
     port = int(os.environ.get('PORT', 5000))
     cursor = get_db_connection()
-    cursor.execute('CREATE TABLE IF NOT EXISTS users (username VARCHAR(255), password VARCHAR(255), PRIMARY KEY (username))')
-    # cursor.execute('CREATE TABLE IF NOT EXISTS stats (username VARCHAR(255), wins INT, losses INT, PRIMARY KEY (username))')
+    cursor.execute('CREATE TABLE IF NOT EXISTS users (username VARCHAR(255), password VARCHAR(255), wins INT, losses INT, PRIMARY KEY (username))')
     cursor.close
     app.run(debug=True, host='0.0.0.0', port=port)
