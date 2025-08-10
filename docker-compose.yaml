@@ -38,7 +38,7 @@ services:
     depends_on:
       db:
         condition: service_healthy
-    container_name: app
+    container_name: api
   frontend:
     build:
       context: .
