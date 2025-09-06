@@ -1,5 +1,5 @@
 import React from "react"
-import "../../css/login.css"
+import "../../App.css"
 import { useState } from 'react';
 import axios from "axios";
 import useToken from './useToken';
@@ -48,7 +48,7 @@ export function Login(props) {
     <h1>Please Log In</h1>
     <form className="login">
       <label>
-        <p>Username</p>
+        <p>Username:</p>
         <input onChange={handleChange}
                type="username"
                name="username"
@@ -56,7 +56,7 @@ export function Login(props) {
                value={loginForm.username} />
       </label>
       <label>
-        <p>Password</p>
+        <p>Password:</p>
         <input onChange={handleChange} 
                type="password"
                name="password"
